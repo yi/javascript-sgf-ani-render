@@ -55,6 +55,9 @@ class SgfAniRender
     # 每帧动画在原尺寸画布上的 x,y,w,h
     @originalRects = []
 
+    @assetHight = 0
+    @assetWidth = 0
+
     yScroll = 0
     for i in [0...@assetFrameNum] by 1
       left  = ba.readShort()
@@ -74,6 +77,9 @@ class SgfAniRender
         width : width
         height : height
 
+      @assetHight += height
+      @assetWidth = width if width > @assetWidth
+
       yScroll += height
 
     ## complte image binary file parsing
@@ -81,10 +87,38 @@ class SgfAniRender
 
     @paper = Raphael parentElement, @canvasWidth, @canvasHeight
     @elBackgrond = @paper.rect 0, 0, @canvasWidth, @canvasHeight
-    @elBackgrond.attr "fill", "#f00"
+    @elBackgrond.attr "fill", "green"
+    @elFrame = @paper.image @url, 0, 0, @assetWidth, @assetHight
+
+    @setRegPoint(@regPointX, @regPointY)
+    @goto(1)
 
     return
 
+  goto : (num)->
+    num = (parseInt(num, 10) || 0) % @assetFrameNum
+    assetRect = @assetRects[num]
+    originalRect = @originalRects[num]
+    @elFrame.attr({ "clip-rect":  "#{assetRect.left},#{assetRect.top},#{assetRect.width},#{assetRect.height}"})
+    @elFrame.attr
+      x : -assetRect.left
+      y : -assetRect.top
+    @elFrame.translate(-assetRect.left, -assetRect.top)
+    return
+
+  setRegPoint : (x, y)->
+    @regPointX = x
+    @regPointY = y
+    @paper.path("M0 #{y}L#{@canvasWidth} #{y}").attr
+      "stroke-dasharray" : ". "
+      "stroke-opacity" : "1"
+      "stroke" : "#F00"
+    @paper.path("M#{x} 0L#{x} #{@canvasHeight}").attr
+      "stroke-dasharray" : ". "
+      "stroke-opacity" : "1"
+      "stroke" : "#F00"
+
+    return
 
   toString : ->
     "[SgfAniRender url:#{@url}]"
