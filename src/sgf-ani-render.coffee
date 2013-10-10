@@ -9,10 +9,14 @@
 class SgfAniRender
 
 
-  @.IMG_TRANSPARENT = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBM
+  @IMG_TRANSPARENT = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBM
 VEXf39////8zI3BgAAAACXBIWXMAAAsSAAALEgHS3X78AAAAFnRFWHRDcmVhdGlvbiBUaW1l
 ADEwLzA5LzEzL23IjwAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNui8sowA
 AAARSURBVAiZY/jPwIAVYRf9DwB+vw/x5A8ThgAAAABJRU5ErkJggg=="
+
+  @MAX_FPS = 60
+
+  @DEFAULT_FPS = 24
 
   # 构造函数
   # @param {HTMLElement || String} parentElement
@@ -97,17 +101,33 @@ AAARSURBVAiZY/jPwIAVYRf9DwB+vw/x5A8ThgAAAABJRU5ErkJggg=="
     @elBackgrond.attr "stroke" : "#999"
     @setBackground()
 
+    @setFps()
+
     @elFrame = @paper.image @url, 0, 0, @assetWidth, @assetHight
 
     @setRegPoint(@regPointX, @regPointY)
-    @goto(2)
 
+    @restart()
+
+    return
+
+  restart : ->
+    @currentFrame = -1
+    @play()
+    return
+
+  play : ->
+    @goto(@currentFrame + 1)
+    setTimeout =>
+      @play()
+    , @spf
     return
 
   goto : (num)->
     num = (parseInt(num, 10) || 0) % @assetFrameNum
     assetRect = @assetRects[num]
     originalRect = @originalRects[num]
+    @currentFrame = num
 
     assetLeft = originalRect.left
     assetTop = originalRect.top - assetRect.top
@@ -120,6 +140,14 @@ AAARSURBVAiZY/jPwIAVYRf9DwB+vw/x5A8ThgAAAABJRU5ErkJggg=="
       y : assetTop
       "clip-rect":  "#{rectLeft},#{rectTop},#{assetRect.width},#{assetRect.height}"
 
+    return
+
+  setFps : (val)->
+    val = (parseInt(val, 10) || SgfAniRender.DEFAULT_FPS) % SgfAniRender.MAX_FPS
+    val = SgfAniRender.DEFAULT_FPS if val < 1 or val > SgfAniRender.MAX_FPS
+    @fps = val
+    @spf = Math.ceil(1000 / val)
+    console.log "[sgf-ani-render::setFps] fps:#{@fps}, spf:#{@spf}"
     return
 
   setRegPoint : (x, y)->
