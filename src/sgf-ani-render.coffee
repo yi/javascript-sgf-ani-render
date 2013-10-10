@@ -8,15 +8,26 @@
 
 class SgfAniRender
 
-
+  # base64 of transparent background image
   @IMG_TRANSPARENT = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBM
 VEXf39////8zI3BgAAAACXBIWXMAAAsSAAALEgHS3X78AAAAFnRFWHRDcmVhdGlvbiBUaW1l
 ADEwLzA5LzEzL23IjwAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNui8sowA
 AAARSURBVAiZY/jPwIAVYRf9DwB+vw/x5A8ThgAAAABJRU5ErkJggg=="
 
+  # max fps acceptable
   @MAX_FPS = 60
 
+  # defaut fps
   @DEFAULT_FPS = 24
+
+  # sgf file signature
+  @FILE_SIGNATURE = "SGF-asset"
+
+  # number of bytes per int
+  @INTEGER_BYTE_LENGTH = 4
+
+  # max canvas size acceptable
+  @MAX_CANVAS_SIZE = 2048
 
   # 构造函数
   # @param {HTMLElement || String} parentElement
@@ -26,13 +37,6 @@ AAARSURBVAiZY/jPwIAVYRf9DwB+vw/x5A8ThgAAAABJRU5ErkJggg=="
       console.log "[sgf-ani-render::constructor] bad arguments, parentElement:#{parentElement}, @url={@url}"
       return
 
-    FILE_SIGNATURE = "SGF-asset"
-
-    INTEGER_BYTE_LENGTH = 4
-
-    MAX_CANVAS_SIZE = 2048
-
-
     ba = new BinFileReader(url)
     fileSize = ba.getFileSize()
 
@@ -40,23 +44,23 @@ AAARSURBVAiZY/jPwIAVYRf9DwB+vw/x5A8ThgAAAABJRU5ErkJggg=="
       console.log "[sgf-ani-render::constructor] fail to read image binary"
       return
 
-    signature = ba.readString(FILE_SIGNATURE.length, fileSize - FILE_SIGNATURE.length)
-    if signature isnt FILE_SIGNATURE
+    signature = ba.readString(SgfAniRender.FILE_SIGNATURE.length, fileSize - SgfAniRender.FILE_SIGNATURE.length)
+    if signature isnt SgfAniRender.FILE_SIGNATURE
       console.log "[sgf-ani-render::constructor] invalid animation file"
       return
 
-    ba.movePointer(- INTEGER_BYTE_LENGTH - FILE_SIGNATURE.length)
+    ba.movePointer(- SgfAniRender.INTEGER_BYTE_LENGTH - SgfAniRender.FILE_SIGNATURE.length)
 
     amfLen = ba.readInt()
 
-    ba.movePointer(- INTEGER_BYTE_LENGTH - amfLen)
+    ba.movePointer(- SgfAniRender.INTEGER_BYTE_LENGTH - amfLen)
     @canvasWidth = ba.readShort()
     @canvasHeight = ba.readShort()
     @regPointX = ba.readShort()
     @regPointY = ba.readShort()
     @assetFrameNum = ba.readShort()
 
-    if @canvasWidth > MAX_CANVAS_SIZE or @canvasHeight > MAX_CANVAS_SIZE or @assetFrameNum <= 0
+    if @canvasWidth > SgfAniRender.MAX_CANVAS_SIZE or @canvasHeight > SgfAniRender.MAX_CANVAS_SIZE or @assetFrameNum <= 0
       console.log "[sgf-ani-render::constructor] bad animation attrs, canvasWidth:#{@canvasWidth}, @canvasHeight:#{@canvasHeight}, @assetFrameNum:#{@assetFrameNum}"
       return
 
