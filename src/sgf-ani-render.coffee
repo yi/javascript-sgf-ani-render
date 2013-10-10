@@ -29,6 +29,8 @@ AAARSURBVAiZY/jPwIAVYRf9DwB+vw/x5A8ThgAAAABJRU5ErkJggg=="
   # max canvas size acceptable
   @MAX_CANVAS_SIZE = 2048
 
+  @TOOLBAR_HEIGHT = 30
+
   # 构造函数
   # @param {HTMLElement || String} parentElement
   # @param {String} url
@@ -100,7 +102,9 @@ AAARSURBVAiZY/jPwIAVYRf9DwB+vw/x5A8ThgAAAABJRU5ErkJggg=="
     ## complte image binary file parsing
     #console.log @
 
-    @paper = Raphael parentElement, @canvasWidth, @canvasHeight
+    @paper = Raphael parentElement, @canvasWidth, @canvasHeight + SgfAniRender.TOOLBAR_HEIGHT
+
+    # build background
     @elBackgrond = @paper.rect 0, 0, @canvasWidth, @canvasHeight
     @elBackgrond.attr "stroke" : "#999"
     @setBackground()
@@ -113,6 +117,48 @@ AAARSURBVAiZY/jPwIAVYRf9DwB+vw/x5A8ThgAAAABJRU5ErkJggg=="
 
     @restart()
 
+    # build toolbar
+    @paper.rect(0, @canvasHeight, @canvasWidth, SgfAniRender.TOOLBAR_HEIGHT).attr
+      "fill" : "#666"
+      "stroke" : "#999"
+
+    # play/stop button
+    @btnPlay = @paper.rect(10, @canvasHeight + 5, 30, 20)
+    @btnPlay.attr
+      "fill" : "#f00"
+      "stroke" : "#0f9"
+    @btnPlay.click => @togglePlay()
+
+    # button backword
+    @btnBackword  = @paper.rect(50, @canvasHeight + 5, 30, 20)
+    @btnBackword.attr
+      "fill" : "#f00"
+      "stroke" : "#0f9"
+    @btnBackword.click =>
+      @stop()
+      @goto(@currentFrame - 1)
+
+    @labelFrame = @paper.text 100, @canvasHeight + 5, "~/#{@assetFrameNum}"
+
+    # button forward
+    @btnForward = @paper.rect(200, @canvasHeight + 5, 30, 20)
+    @btnForward .attr
+      "fill" : "#f00"
+      "stroke" : "#0f9"
+    @btnForward .click =>
+      @stop()
+      @goto(@currentFrame + 1)
+
+    return
+
+
+  togglePlay : ->
+    if @tickToPlay then @stop() else @play()
+    return
+
+  stop : ->
+    clearTimeout @tickToPlay
+    @tickToPlay = null
     return
 
   restart : ->
@@ -122,13 +168,14 @@ AAARSURBVAiZY/jPwIAVYRf9DwB+vw/x5A8ThgAAAABJRU5ErkJggg=="
 
   play : ->
     @goto(@currentFrame + 1)
-    setTimeout =>
+    @tickToPlay = setTimeout =>
       @play()
     , @spf
     return
 
   goto : (num)->
     num = (parseInt(num, 10) || 0) % @assetFrameNum
+    num = (@assetFrameNum + num) % @assetFrameNum if num < 0
     assetRect = @assetRects[num]
     originalRect = @originalRects[num]
     @currentFrame = num
