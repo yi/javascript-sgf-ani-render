@@ -94,7 +94,7 @@ AAARSURBVAiZY/jPwIAVYRf9DwB+vw/x5A8ThgAAAABJRU5ErkJggg=="
       yScroll += height
 
     ## complte image binary file parsing
-    console.log @
+    #console.log @
 
     @paper = Raphael parentElement, @canvasWidth, @canvasHeight
     @elBackgrond = @paper.rect 0, 0, @canvasWidth, @canvasHeight
@@ -147,7 +147,7 @@ AAARSURBVAiZY/jPwIAVYRf9DwB+vw/x5A8ThgAAAABJRU5ErkJggg=="
     val = SgfAniRender.DEFAULT_FPS if val < 1 or val > SgfAniRender.MAX_FPS
     @fps = val
     @spf = Math.ceil(1000 / val)
-    console.log "[sgf-ani-render::setFps] fps:#{@fps}, spf:#{@spf}"
+    #console.log "[sgf-ani-render::setFps] fps:#{@fps}, spf:#{@spf}"
     return
 
   setRegPoint : (x, y)->
