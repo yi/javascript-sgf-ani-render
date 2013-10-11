@@ -29,12 +29,15 @@ AAARSURBVAiZY/jPwIAVYRf9DwB+vw/x5A8ThgAAAABJRU5ErkJggg=="
   # max canvas size acceptable
   @MAX_CANVAS_SIZE = 2048
 
-  @TOOLBAR_HEIGHT = 30
+  #@TOOLBAR_HEIGHT = 30
 
   # 构造函数
   # @param {HTMLElement || String} parentElement
   # @param {String} url
-  constructor : (parentElement, @url)->
+  # @param {String} title
+  # @param {Function} onChange, signature: onChange(eventObj)->
+  #                   eventObj: type: and value:
+  constructor : (parentElement, @url, title, @onChange)->
     unless parentElement? and @url?
       console.log "[sgf-ani-render::constructor] bad arguments, parentElement:#{parentElement}, @url={@url}"
       return
@@ -102,12 +105,19 @@ AAARSURBVAiZY/jPwIAVYRf9DwB+vw/x5A8ThgAAAABJRU5ErkJggg=="
     ## complte image binary file parsing
     #console.log @
 
-    @paper = Raphael parentElement, @canvasWidth, @canvasHeight + SgfAniRender.TOOLBAR_HEIGHT
+    @paper = Raphael parentElement, @canvasWidth, @canvasHeight
 
     # build background
     @elBackgrond = @paper.rect 0, 0, @canvasWidth, @canvasHeight
     @elBackgrond.attr "stroke" : "#999"
     @setBackground()
+
+    # display title
+    if title? then @paper.text(10, 15, String(title)).attr
+      "font-family" : "arial"
+      "font-size" : "14"
+      "text-anchor" : "start"
+      "fill" : "#999"
 
     @setFps()
 
@@ -116,38 +126,6 @@ AAARSURBVAiZY/jPwIAVYRf9DwB+vw/x5A8ThgAAAABJRU5ErkJggg=="
     @setRegPoint(@regPointX, @regPointY)
 
     @restart()
-
-    # build toolbar
-    @paper.rect(0, @canvasHeight, @canvasWidth, SgfAniRender.TOOLBAR_HEIGHT).attr
-      "fill" : "#666"
-      "stroke" : "#999"
-
-    # play/stop button
-    @btnPlay = @paper.rect(10, @canvasHeight + 5, 30, 20)
-    @btnPlay.attr
-      "fill" : "#f00"
-      "stroke" : "#0f9"
-    @btnPlay.click => @togglePlay()
-
-    # button backword
-    @btnBackword  = @paper.rect(50, @canvasHeight + 5, 30, 20)
-    @btnBackword.attr
-      "fill" : "#f00"
-      "stroke" : "#0f9"
-    @btnBackword.click =>
-      @stop()
-      @goto(@currentFrame - 1)
-
-    @labelFrame = @paper.text 100, @canvasHeight + 5, "~/#{@assetFrameNum}"
-
-    # button forward
-    @btnForward = @paper.rect(200, @canvasHeight + 5, 30, 20)
-    @btnForward .attr
-      "fill" : "#f00"
-      "stroke" : "#0f9"
-    @btnForward .click =>
-      @stop()
-      @goto(@currentFrame + 1)
 
     return
 
@@ -190,6 +168,9 @@ AAARSURBVAiZY/jPwIAVYRf9DwB+vw/x5A8ThgAAAABJRU5ErkJggg=="
       x : assetLeft
       y : assetTop
       "clip-rect":  "#{rectLeft},#{rectTop},#{assetRect.width},#{assetRect.height}"
+
+    if @onChange then @onChange
+      currentFrame : @currentFrame
 
     return
 
