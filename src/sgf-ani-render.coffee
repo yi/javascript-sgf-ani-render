@@ -202,7 +202,8 @@ B/DY/IPgu+N6ulXKn62ATNyW/ntu9/4CzvIHc4Ju2MsAAAAASUVORK5CYII="
 
     @setFps()
 
-    @elFrame = @paper.image @url, 0, 0, @assetWidth, @assetHight
+    @elFrame = @paper.image(@url, 0, 0, @assetWidth, @assetHight)
+    @elFrame.node.setAttribute("pointer-events", "none")
 
     @setRegPoint(@regPointX, @regPointY)
 
@@ -287,7 +288,7 @@ B/DY/IPgu+N6ulXKn62ATNyW/ntu9/4CzvIHc4Ju2MsAAAAASUVORK5CYII="
     return
 
   setRegPoint : (x, y)->
-    console.log "[sgf-ani-render::setRegPoint] #{x}, #{y}"
+    #console.log "[sgf-ani-render::setRegPoint] #{x}, #{y}"
     @regPointX = x
     @regPointY = y
     @regAidH = @regAidH || @paper.path("M0 #{y}L#{@canvasWidth} #{y}").attr
