@@ -88,40 +88,61 @@ B/DY/IPgu+N6ulXKn62ATNyW/ntu9/4CzvIHc4Ju2MsAAAAASUVORK5CYII="
 
   # 构造函数
   # @param {HTMLElement || String} parentElement
-  constructor : (parentElement) ->
-    unless parentElement? and @url?
-      throw "[sgf-ani-render::constructor] bad arguments, parentElement:#{parentElement}, @url:={@url}"
+  constructor : (parentElement, background, @fixedCanvasWidth, @fixedCanvasHeight) ->
+    unless parentElement?
+      throw "[sgf-ani-render::constructor] bad parentElement:#{parentElement}"
       return
 
-    @paper = Raphael parentElement, SgfAniRender.MIN_CANVAS_SIZE, SgfAniRender.MIN_CANVAS_SIZE
+    # check input range
+    @fixedCanvasWidth = parseInt(@fixedCanvasWidth, 10) || 0
+    @fixedCanvasWidth = 0 if @fixedCanvasWidth < SgfAniRender.MIN_CANVAS_SIZE
+    @fixedCanvasWidth = SgfAniRender.MAX_CANVAS_SIZE if @fixedCanvasWidth > SgfAniRender.MAX_CANVAS_SIZE
+
+    @fixedCanvasHeight= parseInt(@fixedCanvasHeight, 10) || 0
+    @fixedCanvasHeight= 0 if @fixedCanvasHeight < SgfAniRender.MIN_CANVAS_SIZE
+    @fixedCanvasHeight= SgfAniRender.MAX_CANVAS_SIZE if @fixedCanvasHeight > SgfAniRender.MAX_CANVAS_SIZE
+
+    @paper = Raphael parentElement, @fixedCanvasWidth || SgfAniRender.MIN_CANVAS_SIZE, @fixedCanvasHeight || SgfAniRender.MIN_CANVAS_SIZE
+
+    # add bg control button
+    @btnBgColor = @paper.rect(@paper.width - 21, @paper.height - 21, 16, 16)
+    @btnBgColor.attr(
+      fill : SgfAniRender.BG_TRANSPARENT
+      stroke : "#333"
+    ).click => @switchBackground()
+
+    # add play control button
+    # must use rect, cause the inside icon changes
+    @btnPlayControl = @paper.rect(5, @paper.height - 21, 16, 16)
+    @btnPlayControl.attr(
+      fill : SgfAniRender.ICON_PAUSE
+      stroke : "#none"
+    ).click => @togglePlay()
+
+    # add reg control button
+    @btnRegControl = @paper.image(SgfAniRender.ICON_AIM, @paper.width - 47, @paper.height - 21, 16, 16)
+    .drag(SgfAniRender.move, SgfAniRender.start, SgfAniRender.up).parent = @
+
+    @setBackground background
 
   # 构造函数
   # @param {HTMLElement || String} parentElement
   # @param {String} url
   # @param {Object} config: {
   #     title:String
-  #     background : String ["transparent", "black","white","red","green","blue","grey"]
-  #     fixedWidth : uint  >= 245, <= 2048
-  #     fixedHeight : uint  >= 245, <= 2048
   # }
   #
-  load : ( @url, config = SgfAniRender.EMPTY_OBJECT)->
+  load : (url, title)->
 
-    # check input range
-    config.fixedWidth = parseInt(config.fixedWidth, 10) || 0
-    config.fixedWidth = 0 if config.fixedWidth < SgfAniRender.MIN_CANVAS_SIZE
-    config.fixedWidth = SgfAniRender.MAX_CANVAS_SIZE if config.fixedWidth > SgfAniRender.MAX_CANVAS_SIZE
-    config.fixedHeight = parseInt(config.fixedHeight, 10) || 0
-    config.fixedHeight = 0 if config.fixedHeight < SgfAniRender.MIN_CANVAS_SIZE
-    config.fixedHeight = SgfAniRender.MAX_CANVAS_SIZE if config.fixedHeight > SgfAniRender.MAX_CANVAS_SIZE
+    if url is @url
+      console.log "[sgf-ani-render::load] target url already loaded. #{url}"
+      return
 
-    # build background
-    @canvasWidth = config.fixedWidth || SgfAniRender.MIN_CANVAS_SIZE
-    @canvasHeight = config.fixedHeight || SgfAniRender.MIN_CANVAS_SIZE
+    @url = url
 
-    @elBackgrond = @paper.rect 0, 0, @canvasWidth, @canvasHeight
-    @elBackgrond.attr "stroke" : "#999"
-    @setBackground("grey")
+    @displayLabel(title || "")
+
+    @stop()
 
     err = null
 
@@ -150,21 +171,25 @@ B/DY/IPgu+N6ulXKn62ATNyW/ntu9/4CzvIHc4Ju2MsAAAAASUVORK5CYII="
     amfLen = ba.readInt()
 
     ba.movePointer(- SgfAniRender.INTEGER_BYTE_LENGTH - amfLen)
-    @canvasWidth = ba.readShort()
-    @canvasWidth = SgfAniRender.MIN_CANVAS_SIZE if @canvasWidth < SgfAniRender.MIN_CANVAS_SIZE
 
-    @canvasHeight = ba.readShort()
-    @canvasHeight = SgfAniRender.MIN_CANVAS_SIZE if @canvasHeight < SgfAniRender.MIN_CANVAS_SIZE
+    canvasWidth = ba.readShort()
+    canvasWidth = SgfAniRender.MIN_CANVAS_SIZE if canvasWidth < SgfAniRender.MIN_CANVAS_SIZE
+
+    canvasHeight = ba.readShort()
+    canvasHeight = SgfAniRender.MIN_CANVAS_SIZE if canvasHeight < SgfAniRender.MIN_CANVAS_SIZE
 
     @regPointX = ba.readShort()
     @regPointY = ba.readShort()
     @assetFrameNum = ba.readShort()
 
-    if @canvasWidth > SgfAniRender.MAX_CANVAS_SIZE or @canvasHeight > SgfAniRender.MAX_CANVAS_SIZE or @assetFrameNum <= 0
-      err ="bad animation attrs, canvasWidth:#{@canvasWidth}, @canvasHeight:#{@canvasHeight}, @assetFrameNum:#{@assetFrameNum}"
-      console.log "[sgf-ani-render::constructor] #{err}"
+    if canvasWidth > SgfAniRender.MAX_CANVAS_SIZE or canvasHeight > SgfAniRender.MAX_CANVAS_SIZE or @assetFrameNum <= 0
+      err ="bad animation attrs, canvasWidth:#{canvasWidth}, @canvasHeight:#{canvasHeight}, @assetFrameNum:#{@assetFrameNum}"
+      console.log "[sgf-ani-render::load] #{err}"
       @displayError err
       return
+
+    if @fixedCanvasWidth is 0 and @fixedCanvasHeight is 0
+      @_setCanvasSize canvasWidth, canvasHeight
 
     # 每帧动画在png压缩画布上的 x,y,w,h
     @assetRects = []
@@ -199,44 +224,12 @@ B/DY/IPgu+N6ulXKn62ATNyW/ntu9/4CzvIHc4Ju2MsAAAAASUVORK5CYII="
 
       yScroll += height
 
-    ## complte image binary file parsing
-    #console.log @
-
-
-    # add bg control button
-    @btnBgColor = @paper.rect(@canvasWidth - 21, @canvasHeight - 21, 16, 16)
-    @btnBgColor.attr(
-      fill : SgfAniRender.BG_TRANSPARENT
-      stroke : "#333"
-    ).click => @switchBackground()
-
-    # add play control button
-    # must use rect, cause the inside icon changes
-    @btnPlayControl = @paper.rect(5, @canvasHeight - 21, 16, 16)
-    @btnPlayControl.attr(
-      fill : SgfAniRender.ICON_PAUSE
-      stroke : "#none"
-    ).click => @togglePlay()
-
-    # display title
-    if config.title? then @paper.text(10, 15, String(config.title)).attr
-      "font-family" : "arial"
-      "font-size" : "14"
-      "text-anchor" : "start"
-      "fill" : "#999"
-
     @setFps()
 
     @elFrame = @paper.image(@url, 0, 0, @assetWidth, @assetHight)
     @elFrame.node.setAttribute("pointer-events", "none")
 
     @setRegPoint(@regPointX, @regPointY)
-
-    # add reg control button
-    @btnRegControl = @paper.image(SgfAniRender.ICON_AIM, @canvasWidth - 47, @canvasHeight - 21, 16, 16)
-    .drag(SgfAniRender.move, SgfAniRender.start, SgfAniRender.up).parent = @
-    #.click(=> @toggleRegLAid())
-
     @restart()
 
     return
@@ -268,7 +261,7 @@ B/DY/IPgu+N6ulXKn62ATNyW/ntu9/4CzvIHc4Ju2MsAAAAASUVORK5CYII="
     return
 
   stop : ->
-    clearTimeout @tickToPlay
+    clearTimeout @tickToPlay if @tickToPlay?
     @tickToPlay = null
     return
 
@@ -340,8 +333,21 @@ B/DY/IPgu+N6ulXKn62ATNyW/ntu9/4CzvIHc4Ju2MsAAAAASUVORK5CYII="
 
     return
 
+  _setCanvasSize : (w, h)->
+    @paper.setSize(w,h)
+    if @elBackgrond?
+      @elBackgrond.attr
+        "width" : w
+        "height" : h
+    return
+
   setBackground : (bgColor)->
     bgColor = String(bgColor).toLowerCase()
+
+    unless @elBackgrond?
+      @elBackgrond = @paper.rect 0, 0, @paper.width, @paper.height
+      @elBackgrond.attr "stroke" : "#999"
+
     switch bgColor
       when "white"
         @bgColor = "white"
