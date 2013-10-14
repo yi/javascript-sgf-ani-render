@@ -51,7 +51,11 @@ B/DY/IPgu+N6ulXKn62ATNyW/ntu9/4CzvIHc4Ju2MsAAAAASUVORK5CYII="
 
   @MIN_CANVAS_SIZE = 256
 
-  @BG_LIST = ["trans", "black","white","red","green","blue","grey"]
+  @BG_LIST = ["transparent", "black","white","red","green","blue","grey"]
+
+  @EMPTY_OBJECT = {}
+
+  @DEFAULT_BACKGROUND = "transparent"
 
   @start = ->
     @ox = @attr("x")
@@ -82,15 +86,42 @@ B/DY/IPgu+N6ulXKn62ATNyW/ntu9/4CzvIHc4Ju2MsAAAAASUVORK5CYII="
     delete @newY
     return
 
+  # 构造函数
+  # @param {HTMLElement || String} parentElement
+  constructor : (parentElement) ->
+    unless parentElement? and @url?
+      throw "[sgf-ani-render::constructor] bad arguments, parentElement:#{parentElement}, @url:={@url}"
+      return
+
+    @paper = Raphael parentElement, SgfAniRender.MIN_CANVAS_SIZE, SgfAniRender.MIN_CANVAS_SIZE
 
   # 构造函数
   # @param {HTMLElement || String} parentElement
   # @param {String} url
-  # @param {String} title
-  constructor : (parentElement, @url, title)->
-    unless parentElement? and @url?
-      console.log "[sgf-ani-render::constructor] bad arguments, parentElement:#{parentElement}, @url={@url}"
-      return
+  # @param {Object} config: {
+  #     title:String
+  #     background : String ["transparent", "black","white","red","green","blue","grey"]
+  #     fixedWidth : uint  >= 245, <= 2048
+  #     fixedHeight : uint  >= 245, <= 2048
+  # }
+  #
+  load : ( @url, config = SgfAniRender.EMPTY_OBJECT)->
+
+    # check input range
+    config.fixedWidth = parseInt(config.fixedWidth, 10) || 0
+    config.fixedWidth = 0 if config.fixedWidth < SgfAniRender.MIN_CANVAS_SIZE
+    config.fixedWidth = SgfAniRender.MAX_CANVAS_SIZE if config.fixedWidth > SgfAniRender.MAX_CANVAS_SIZE
+    config.fixedHeight = parseInt(config.fixedHeight, 10) || 0
+    config.fixedHeight = 0 if config.fixedHeight < SgfAniRender.MIN_CANVAS_SIZE
+    config.fixedHeight = SgfAniRender.MAX_CANVAS_SIZE if config.fixedHeight > SgfAniRender.MAX_CANVAS_SIZE
+
+    # build background
+    @canvasWidth = config.fixedWidth || SgfAniRender.MIN_CANVAS_SIZE
+    @canvasHeight = config.fixedHeight || SgfAniRender.MIN_CANVAS_SIZE
+
+    @elBackgrond = @paper.rect 0, 0, @canvasWidth, @canvasHeight
+    @elBackgrond.attr "stroke" : "#999"
+    @setBackground("grey")
 
     err = null
 
@@ -171,11 +202,6 @@ B/DY/IPgu+N6ulXKn62ATNyW/ntu9/4CzvIHc4Ju2MsAAAAASUVORK5CYII="
     ## complte image binary file parsing
     #console.log @
 
-    @paper = Raphael parentElement, @canvasWidth, @canvasHeight
-
-    # build background
-    @elBackgrond = @paper.rect 0, 0, @canvasWidth, @canvasHeight
-    @elBackgrond.attr "stroke" : "#999"
 
     # add bg control button
     @btnBgColor = @paper.rect(@canvasWidth - 21, @canvasHeight - 21, 16, 16)
@@ -183,7 +209,6 @@ B/DY/IPgu+N6ulXKn62ATNyW/ntu9/4CzvIHc4Ju2MsAAAAASUVORK5CYII="
       fill : SgfAniRender.BG_TRANSPARENT
       stroke : "#333"
     ).click => @switchBackground()
-    @setBackground("grey")
 
     # add play control button
     # must use rect, cause the inside icon changes
@@ -194,7 +219,7 @@ B/DY/IPgu+N6ulXKn62ATNyW/ntu9/4CzvIHc4Ju2MsAAAAASUVORK5CYII="
     ).click => @togglePlay()
 
     # display title
-    if title? then @paper.text(10, 15, String(title)).attr
+    if config.title? then @paper.text(10, 15, String(config.title)).attr
       "font-family" : "arial"
       "font-size" : "14"
       "text-anchor" : "start"
@@ -337,7 +362,7 @@ B/DY/IPgu+N6ulXKn62ATNyW/ntu9/4CzvIHc4Ju2MsAAAAASUVORK5CYII="
         @bgColor = "grey"
         fill = "#999"
       else
-        @bgColor = "trans"
+        @bgColor = "transparent"
         fill = SgfAniRender.BG_TRANSPARENT
 
     @elBackgrond.attr "fill", fill
@@ -348,8 +373,21 @@ B/DY/IPgu+N6ulXKn62ATNyW/ntu9/4CzvIHc4Ju2MsAAAAASUVORK5CYII="
     "[SgfAniRender url:#{@url}]"
 
   displayError : (msg) ->
-    document.write "<div style='disply:block; width:256px; height:256px; background:#999; border:1px solid #f00; color:#f00'>#{msg}</div>"
+    @label = @label || @paper.text(10, 15, String(msg))
+    @label.attr
+      "font-family" : "arial"
+      "font-size" : "24"
+      "text-anchor" : "start"
+      "fill" : "#f00"
     return
+
+  displayLabel : (msg) ->
+    @label = @label ||  @paper.text(10, 15, String(msg))
+    @label.attr
+      "font-family" : "arial"
+      "font-size" : "14"
+      "text-anchor" : "start"
+      "fill" : "#999"
 
 
 window.SgfAniRender = SgfAniRender
