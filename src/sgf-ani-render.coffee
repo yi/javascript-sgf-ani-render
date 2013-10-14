@@ -183,7 +183,7 @@ B/DY/IPgu+N6ulXKn62ATNyW/ntu9/4CzvIHc4Ju2MsAAAAASUVORK5CYII="
       fill : SgfAniRender.BG_TRANSPARENT
       stroke : "#333"
     ).click => @switchBackground()
-    @setBackground()
+    @setBackground("grey")
 
     # add play control button
     # must use rect, cause the inside icon changes
