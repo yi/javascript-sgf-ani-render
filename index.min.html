@@ -7,8 +7,6 @@
     <meta charset="utf-8">
 
     <script src="/dist/sgf-ani-render.min.js?48"></script>
-
-
   </head>
   <body>
     <div id="header">
@@ -18,22 +16,48 @@
       <p>some text</p>
 
       <div id="canvas1">
-      <script>
-        var a = new SgfAniRender("canvas1", "./imgs/8ff972dea00.sgf")
-      </script>
-      </div>
+        <script>
+          window.canvasA = new SgfAniRender("canvas1", null, 512, 512)
+          window.canvasA.load("./imgs/8ff972dea00.sgf", "some where some how, very very long 中午一丝场有场")
+        </script>
+        <div><a href="javascript:canvasA.load('./imgs/od18460eb5h.sgf','od18460eb5h.sgf', 15)">od18460eb5h.sgf</div>
+          <div><a href="javascript:canvasA.load('./imgs/v618460ec2t.sgf','v618460ec2t.sgf', 15)">v618460ec2t.sgf</div>
+            <div><a href="javascript:canvasA.load('./imgs/8018460echr.sgf','8018460echr.sgf', 15)">8018460echr.sgf</div>
+              <div><a href="javascript:canvasA.load('./imgs/notexist.sgf','notexist.sgf', 15)">notexist.sgf</div>
+                <div></div>
+                <div></div>
+              </div>
 
-      <hr/>
+              <hr/>
 
-      <div id="canvas2">
-      <script>
-        var a = new SgfAniRender("canvas2", "./imgs/a2e782c387b.sgf")
-      </script>
-      </div>
+              <div id="canvas2">
+                <script>
+                  var b = new SgfAniRender("canvas2", "grey").load("./imgs/151865m5adk.sgf")
+                </script>
+              </div>
 
 
-    </div>
-  </div>
-</body>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </html>
+              <hr/>
+
+              <div id="canvas2">
+                <script>
+                  var c = new SgfAniRender("canvas2", "red").load("./imgs/vb1865m576i.sgf")
+                </script>
+              </div>
+
+              <hr/>
+
+              <div id="canvas3">
+                <script>
+                  var d = new SgfAniRender("canvas3", null, 1024, 1024).load("./imgs/s81865m53lf.sgf")
+                </script>
+              </div>
+
+
+            </div>
+          </div>
+        </body>
+    </html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </html>
+
+
 
