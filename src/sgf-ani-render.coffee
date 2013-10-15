@@ -25,14 +25,26 @@ VEX///8AAABVwtN+AAAAAnRSTlMAuyogpzwAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAcdEVY
 dFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzbovLKMAAAAFnRFWHRDcmVhdGlvbiBUaW1l
 ADEwLzExLzEz17nJ0AAAAA5JREFUCJlj+GPPQAoCAN6nE7EZ+6SGAAAAAElFTkSuQmCC)"
 
-  @ICON_AIM = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAA3NCSVQICAjb4U/gAAAAVFBM
-VEX///9jcJVNev9OevtPefRReO1SeOhTd+BXdc9Ydc1YdcladMRmb4lbdL5dc7Vec7Ffcqxe
-cq9icZxlb49mb4lmb4dpbXlnboJsbGxsbG5rbHEiIiJyfgGzAAAAHHRSTlMAVYiIiIiIiJmZ
-mZmZqqqqqqq7zN3d3d3/////Jrqp7AAAAAlwSFlzAAALEgAACxIB0t1+/AAAABx0RVh0U29m
-dHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNui8sowAAAAWdEVYdENyZWF0aW9uIFRpbWUAMTAv
-MTEvMTPXucnQAAAAd0lEQVQYlW2P4Q7CMAiES+t0auemVgrj/d9zo6Au0/tBcl8ulyMQUVCJ
-HjVmHazoFzQBrmGE8Fbmcu76wtk9zFOKMaY7ewaf0fRCA9w7GLRSROjg4Mhicy7bhHaUZKB6
-B/DY/IPgu+N6ulXKn62ATNyW/ntu9/4CzvIHc4Ju2MsAAAAASUVORK5CYII="
+  @ICON_AIM = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAA3NCSVQICAjb4U/gAAAAGFBM
+VEX///8cHBwMDAwrKysXFxclJSUlJSUQEBASWjZYAAAACHRSTlMA////RKr//3XOcfIAAAAJ
+cEhZcwAACxIAAAsSAdLdfvwAAAA8dEVYdEFMVFRhZwBUaGlzIGlzIHRoZSBpY29uIGZyb20g
+R2VudGxlZmFjZS5jb20gZnJlZSBpY29ucyBzZXQuINhr6MQAAAAcdEVYdFNvZnR3YXJlAEFk
+b2JlIEZpcmV3b3JrcyBDUzbovLKMAAAAQXRFWHREZXNjcmlwdGlvbgBUaGlzIGlzIHRoZSBp
+Y29uIGZyb20gR2VudGxlZmFjZS5jb20gZnJlZSBpY29ucyBzZXQuIFR+b4cAAAAfdEVYdENv
+cHlyaWdodABST1lBTFRZIEZSRUUgTElDRU5TRSDe2YtpAAAAX0lEQVQImWNgQAIsJmgMVmNj
+UzAjOMQkOAAkkMKQwJIKZDAGMCQwBAJVOjoAeY4uDI6CggIMgoKCEBGXQBcGBvYAhgKGcJCu
+EoYClhKQOUEhKkEBYJOVlFSgdqkwIDEATgUMeYxn03gAAAAASUVORK5CYII="
+
+  @ICON_BRUSH = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAA3NCSVQICAjb4U/gAAAAGFBM
+VEX///8iIiIqKioYGBgYGBgcHBwYGBgMDAxAz6O/AAAACHRSTlMA///M//8RZnplY+YAAAAJ
+cEhZcwAACxIAAAsSAdLdfvwAAAA8dEVYdEFMVFRhZwBUaGlzIGlzIHRoZSBpY29uIGZyb20g
+R2VudGxlZmFjZS5jb20gZnJlZSBpY29ucyBzZXQuINhr6MQAAABEdEVYdENvcHlyaWdodABD
+cmVhdGl2ZSBDb21tb25zIEF0dHJpYnV0aW9uIE5vbi1Db21tZXJjaWFsIE5vIERlcml2YXRp
+dmVze92woAAAAEF0RVh0RGVzY3JpcHRpb24AVGhpcyBpcyB0aGUgaWNvbiBmcm9tIEdlbnRs
+ZWZhY2UuY29tIGZyZWUgaWNvbnMgc2V0LiBUfm+HAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBG
+aXJld29ya3MgQ1M26LyyjAAAAG9JREFUCJljYAADdiUIzVAEZrAlsCupg+gidSOlAiAjWVBQ
+UBwkYAhkGAAZzMKFgoJAGTbzUvPQ0DCgCvNy4xIXNwYG45IyZ3MXoFS5c0myszNIrbm7eYkZ
+yNyUYvfiBBAjzaTEAGKhuXMC1AlgFQDpxxNswBv1gwAAAABJRU5ErkJggg=="
 
   # max fps acceptable
   @MAX_FPS = 60
@@ -103,13 +115,10 @@ B/DY/IPgu+N6ulXKn62ATNyW/ntu9/4CzvIHc4Ju2MsAAAAASUVORK5CYII="
     @fixedCanvasHeight= SgfAniRender.MAX_CANVAS_SIZE if @fixedCanvasHeight > SgfAniRender.MAX_CANVAS_SIZE
 
     @paper = Raphael parentElement, @fixedCanvasWidth || SgfAniRender.MIN_CANVAS_SIZE, @fixedCanvasHeight || SgfAniRender.MIN_CANVAS_SIZE
+    @setBackground background
 
     # add bg control button
-    @btnBgColor = @paper.rect(@paper.width - 21, @paper.height - 21, 16, 16)
-    @btnBgColor.attr(
-      fill : SgfAniRender.BG_TRANSPARENT
-      stroke : "#333"
-    ).click => @switchBackground()
+    @btnBgColor = @paper.image(SgfAniRender.ICON_BRUSH, @paper.width - 21, @paper.height - 21, 16, 16).click => @switchBackground()
 
     # add play control button
     # must use rect, cause the inside icon changes
@@ -121,9 +130,9 @@ B/DY/IPgu+N6ulXKn62ATNyW/ntu9/4CzvIHc4Ju2MsAAAAASUVORK5CYII="
 
     # add reg control button
     @btnRegControl = @paper.image(SgfAniRender.ICON_AIM, @paper.width - 47, @paper.height - 21, 16, 16)
-    .drag(SgfAniRender.move, SgfAniRender.start, SgfAniRender.up).parent = @
+    .drag(SgfAniRender.move, SgfAniRender.start, SgfAniRender.up)
+    @btnRegControl.parent = @
 
-    @setBackground background
 
   # 构造函数
   # @param {HTMLElement || String} parentElement
@@ -183,7 +192,7 @@ B/DY/IPgu+N6ulXKn62ATNyW/ntu9/4CzvIHc4Ju2MsAAAAASUVORK5CYII="
     @assetFrameNum = ba.readShort()
 
     if canvasWidth > SgfAniRender.MAX_CANVAS_SIZE or canvasHeight > SgfAniRender.MAX_CANVAS_SIZE or @assetFrameNum <= 0
-      err ="bad animation attrs, canvasWidth:#{canvasWidth}, @canvasHeight:#{canvasHeight}, @assetFrameNum:#{@assetFrameNum}"
+      err ="bad animation attrs, canvasWidth:#{canvasWidth}, canvasHeight:#{canvasHeight}, @assetFrameNum:#{@assetFrameNum}"
       console.log "[sgf-ani-render::load] #{err}"
       @displayError err
       return
@@ -226,11 +235,21 @@ B/DY/IPgu+N6ulXKn62ATNyW/ntu9/4CzvIHc4Ju2MsAAAAASUVORK5CYII="
 
     @setFps()
 
-    @elFrame = @paper.image(@url, 0, 0, @assetWidth, @assetHight)
-    @elFrame.node.setAttribute("pointer-events", "none")
+    unless @elFrame?
+      @elFrame = @paper.image(@url, 0, 0, @assetWidth, @assetHight)
+      @elFrame.node.setAttribute("pointer-events", "none")
+    else
+      @elFrame.attr
+        href  : @url
+        width : @assetWidth
+        height : @assetHight
 
     @setRegPoint(@regPointX, @regPointY)
     @restart()
+
+    if @btnPlayControl? then @btnPlayControl.show()
+    if @btnBgColor? then @btnBgColor.show()
+    if @btnRegControl? then @btnRegControl.show()
 
     return
 
@@ -309,36 +328,40 @@ B/DY/IPgu+N6ulXKn62ATNyW/ntu9/4CzvIHc4Ju2MsAAAAASUVORK5CYII="
     #console.log "[sgf-ani-render::setRegPoint] #{x}, #{y}"
     @regPointX = x
     @regPointY = y
-    @regAidH = @regAidH || @paper.path("M0 #{y}L#{@canvasWidth} #{y}").attr
+    @regAidH = @regAidH || @paper.path("M0 #{y}L#{@paper.width} #{y}").attr
       "stroke-dasharray" : ". "
       "stroke-opacity" : "1"
       "stroke" : "#F00"
 
     @regAidH.animate
-      path : "M0 #{y}L#{@canvasWidth} #{y}"
+      path : "M0 #{y}L#{@paper.width} #{y}"
     , 500
 
-    #@regAidH.attr
-      #d : "M0 #{y}L#{@canvasWidth} #{y}"
-    @regAidV = @regAidV || @paper.path("M#{x} 0L#{x} #{@canvasHeight}").attr
+    @regAidV = @regAidV || @paper.path("M#{x} 0L#{x} #{@paper.height}").attr
       "stroke-dasharray" : ". "
       "stroke-opacity" : "1"
       "stroke" : "#F00"
     @regAidV.animate
-      path : "M#{x} 0L#{x} #{@canvasHeight}"
+      path : "M#{x} 0L#{x} #{@paper.height}"
     , 500
-    #@regAidV.attr
-      #d : "M#{x} 0L#{x} #{@canvasHeight}"
     @isShowRegAid = true
 
     return
 
   _setCanvasSize : (w, h)->
     @paper.setSize(w,h)
-    if @elBackgrond?
-      @elBackgrond.attr
-        "width" : w
-        "height" : h
+    if @elBackgrond? then @elBackgrond.attr
+      "width" : w
+      "height" : h
+    if @btnPlayControl then @btnPlayControl.attr
+      y : @paper.height - 21
+    if @btnBgColor? then @btnBgColor.attr
+      x : @paper.width - 21
+      y : @paper.height - 21
+    if @btnRegControl?
+      @btnRegControl.attr
+        x : @paper.width - 47
+        y : @paper.height - 21
     return
 
   setBackground : (bgColor)->
@@ -372,7 +395,7 @@ B/DY/IPgu+N6ulXKn62ATNyW/ntu9/4CzvIHc4Ju2MsAAAAASUVORK5CYII="
         fill = SgfAniRender.BG_TRANSPARENT
 
     @elBackgrond.attr "fill", fill
-    @btnBgColor.attr "fill", fill
+    #@btnBgColor.attr "fill", fill
     return
 
   toString : ->
@@ -385,6 +408,9 @@ B/DY/IPgu+N6ulXKn62ATNyW/ntu9/4CzvIHc4Ju2MsAAAAASUVORK5CYII="
       "font-size" : "24"
       "text-anchor" : "start"
       "fill" : "#f00"
+    if @btnPlayControl? then @btnPlayControl.hide()
+    if @btnBgColor? then @btnBgColor.hide()
+    if @btnRegControl? then @btnRegControl.hide()
     return
 
   displayLabel : (msg) ->
@@ -394,6 +420,8 @@ B/DY/IPgu+N6ulXKn62ATNyW/ntu9/4CzvIHc4Ju2MsAAAAASUVORK5CYII="
       "font-size" : "14"
       "text-anchor" : "start"
       "fill" : "#999"
+    return
+
 
 
 window.SgfAniRender = SgfAniRender
