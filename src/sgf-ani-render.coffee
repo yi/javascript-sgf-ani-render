@@ -141,7 +141,7 @@ yNyUYvfiBBAjzaTEAGKhuXMC1AlgFQDpxxNswBv1gwAAAABJRU5ErkJggg=="
   #     title:String
   # }
   #
-  load : (url, title)->
+  load : (url, title, fps)->
 
     if url is @url
       console.log "[sgf-ani-render::load] target url already loaded. #{url}"
@@ -233,7 +233,7 @@ yNyUYvfiBBAjzaTEAGKhuXMC1AlgFQDpxxNswBv1gwAAAABJRU5ErkJggg=="
 
       yScroll += height
 
-    @setFps()
+    @setFps(fps)
 
     unless @elFrame?
       @elFrame = @paper.image(@url, 0, 0, @assetWidth, @assetHight)
@@ -243,6 +243,7 @@ yNyUYvfiBBAjzaTEAGKhuXMC1AlgFQDpxxNswBv1gwAAAABJRU5ErkJggg=="
         href  : @url
         width : @assetWidth
         height : @assetHight
+      @elFrame.node.href.baseVal = @url
 
     @setRegPoint(@regPointX, @regPointY)
     @restart()
@@ -251,7 +252,7 @@ yNyUYvfiBBAjzaTEAGKhuXMC1AlgFQDpxxNswBv1gwAAAABJRU5ErkJggg=="
     if @btnBgColor? then @btnBgColor.show()
     if @btnRegControl? then @btnRegControl.show()
 
-    return
+    return @
 
   toggleRegLAid : ->
     @isShowRegAid = not @isShowRegAid
