@@ -101,6 +101,8 @@ yNyUYvfiBBAjzaTEAGKhuXMC1AlgFQDpxxNswBv1gwAAAABJRU5ErkJggg=="
   # 构造函数
   # @param {HTMLElement || String} parentElement
   constructor : (parentElement, background, @fixedCanvasWidth, @fixedCanvasHeight) ->
+    #console.log "[sgf-ani-render::constructor] background:#{background}"
+
     unless parentElement?
       throw "[sgf-ani-render::constructor] bad parentElement:#{parentElement}"
       return
@@ -413,6 +415,7 @@ yNyUYvfiBBAjzaTEAGKhuXMC1AlgFQDpxxNswBv1gwAAAABJRU5ErkJggg=="
     if @btnPlayControl? then @btnPlayControl.hide()
     if @btnBgColor? then @btnBgColor.hide()
     if @btnRegControl? then @btnRegControl.hide()
+    @setBackground("grey")
     return
 
   displayLabel : (msg) ->
@@ -423,7 +426,6 @@ yNyUYvfiBBAjzaTEAGKhuXMC1AlgFQDpxxNswBv1gwAAAABJRU5ErkJggg=="
       "text-anchor" : "start"
       "fill" : "#333"
       "text" : msg
-    @setBackground()
     return
 
 
