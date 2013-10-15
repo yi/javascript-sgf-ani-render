@@ -237,6 +237,21 @@ yNyUYvfiBBAjzaTEAGKhuXMC1AlgFQDpxxNswBv1gwAAAABJRU5ErkJggg=="
 
     @setFps(fps)
 
+    @setRegPoint(@regPointX, @regPointY)
+
+    if @btnPlayControl? then @btnPlayControl.show()
+    if @btnBgColor? then @btnBgColor.show()
+    if @btnRegControl? then @btnRegControl.show()
+
+    setTimeout =>
+      @_loadImage()
+    , 500
+
+    return @
+
+  _loadImage : ->
+    console.log "[sgf-ani-render::_loadImage] message"
+    console.dir @elFrame
     unless @elFrame?
       @elFrame = @paper.image(@url, 0, 0, @assetWidth, @assetHight)
       @elFrame.node.setAttribute("pointer-events", "none")
@@ -247,14 +262,9 @@ yNyUYvfiBBAjzaTEAGKhuXMC1AlgFQDpxxNswBv1gwAAAABJRU5ErkJggg=="
         height : @assetHight
       @elFrame.node.href.baseVal = @url
 
-    @setRegPoint(@regPointX, @regPointY)
     @restart()
+    return
 
-    if @btnPlayControl? then @btnPlayControl.show()
-    if @btnBgColor? then @btnBgColor.show()
-    if @btnRegControl? then @btnRegControl.show()
-
-    return @
 
   toggleRegLAid : ->
     @isShowRegAid = not @isShowRegAid
