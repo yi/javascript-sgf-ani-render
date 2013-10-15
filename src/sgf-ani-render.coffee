@@ -406,9 +406,10 @@ yNyUYvfiBBAjzaTEAGKhuXMC1AlgFQDpxxNswBv1gwAAAABJRU5ErkJggg=="
     @label = @label || @paper.text(10, 15, String(msg))
     @label.attr
       "font-family" : "arial"
-      "font-size" : "24"
+      "font-size" : "14"
       "text-anchor" : "start"
       "fill" : "#f00"
+      "text" : msg
     if @btnPlayControl? then @btnPlayControl.hide()
     if @btnBgColor? then @btnBgColor.hide()
     if @btnRegControl? then @btnRegControl.hide()
@@ -420,7 +421,9 @@ yNyUYvfiBBAjzaTEAGKhuXMC1AlgFQDpxxNswBv1gwAAAABJRU5ErkJggg=="
       "font-family" : "arial"
       "font-size" : "14"
       "text-anchor" : "start"
-      "fill" : "#999"
+      "fill" : "#333"
+      "text" : msg
+    @setBackground()
     return
 
 
