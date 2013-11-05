@@ -26,7 +26,7 @@
     "node": ">= 0.8.0"
   },
   "scripts": {
-    "test": "grunt nodeunit"
+    "watch" : "coffee -o ./lib/ -cw ./src/"
   },
   "devDependencies": {
     "chai": ">=1.2.0",

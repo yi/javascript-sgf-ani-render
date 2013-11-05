@@ -243,15 +243,6 @@ yNyUYvfiBBAjzaTEAGKhuXMC1AlgFQDpxxNswBv1gwAAAABJRU5ErkJggg=="
     if @btnBgColor? then @btnBgColor.show()
     if @btnRegControl? then @btnRegControl.show()
 
-    setTimeout =>
-      @_loadImage()
-    , 500
-
-    return @
-
-  _loadImage : ->
-    console.log "[sgf-ani-render::_loadImage] message"
-    console.dir @elFrame
     unless @elFrame?
       @elFrame = @paper.image(@url, 0, 0, @assetWidth, @assetHight)
       @elFrame.node.setAttribute("pointer-events", "none")
@@ -264,6 +255,28 @@ yNyUYvfiBBAjzaTEAGKhuXMC1AlgFQDpxxNswBv1gwAAAABJRU5ErkJggg=="
 
     @restart()
     return
+
+    #setTimeout =>
+      #@_loadImage()
+    #, 500
+
+    #return @
+
+  #_loadImage : ->
+    #console.log "[sgf-ani-render::_loadImage] message"
+    #console.dir @elFrame
+    #unless @elFrame?
+      #@elFrame = @paper.image(@url, 0, 0, @assetWidth, @assetHight)
+      #@elFrame.node.setAttribute("pointer-events", "none")
+    #else
+      #@elFrame.attr
+        #href  : @url
+        #width : @assetWidth
+        #height : @assetHight
+      #@elFrame.node.href.baseVal = @url
+
+    #@restart()
+    #return
 
 
   toggleRegLAid : ->
