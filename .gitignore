@@ -1,4 +1,7 @@
 /node_modules/
 *.swp
 *.swo
+*.swn
 .DS_Store
+npm-debug.log
+

@@ -3,48 +3,24 @@
 # https://github.com/yi/javascript-sgf-ani-render
 #
 # Copyright (c) 2013 yi
-# Licensed under the MIT license.
 ##
 
 class SgfAniRender
 
   # base64 of transparent background image
-  @BG_TRANSPARENT = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBM
-VEXf39////8zI3BgAAAACXBIWXMAAAsSAAALEgHS3X78AAAAFnRFWHRDcmVhdGlvbiBUaW1l
-ADEwLzA5LzEzL23IjwAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNui8sowA
-AAARSURBVAiZY/jPwIAVYRf9DwB+vw/x5A8ThgAAAABJRU5ErkJggg==)"
+  @BG_TRANSPARENT = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBM VEXf39////8zI3BgAAAACXBIWXMAAAsSAAALEgHS3X78AAAAFnRFWHRDcmVhdGlvbiBUaW1l ADEwLzA5LzEzL23IjwAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNui8sowA AAARSURBVAiZY/jPwIAVYRf9DwB+vw/x5A8ThgAAAABJRU5ErkJggg==)"
 
-  @ICON_PLAY = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAgMAAABinRfyAAAAA3NCSVQICAjb4U/gAAAADFBM
-VEX///8AAAAAAAAAAAD4jAJNAAAABHRSTlMARJm7ODAY0QAAAAlwSFlzAAALEgAACxIB0t1+
-/AAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNui8sowAAAAWdEVYdENyZWF0
-aW9uIFRpbWUAMTAvMTEvMTPXucnQAAAAKklEQVQImTXMMQ4AAAjCQP8/8V2nagccyCUQJ/O3
-BhKJRCKRjbRIx+kDcbwHJDFPvYXLAAAAAElFTkSuQmCC)"
+  # base64 of play icon
+  @ICON_PLAY = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAgMAAABinRfyAAAAA3NCSVQICAjb4U/gAAAADFBM VEX///8AAAAAAAAAAAD4jAJNAAAABHRSTlMARJm7ODAY0QAAAAlwSFlzAAALEgAACxIB0t1+ /AAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNui8sowAAAAWdEVYdENyZWF0 aW9uIFRpbWUAMTAvMTEvMTPXucnQAAAAKklEQVQImTXMMQ4AAAjCQP8/8V2nagccyCUQJ/O3 BhKJRCKRjbRIx+kDcbwHJDFPvYXLAAAAAElFTkSuQmCC)"
 
-  @ICON_PAUSE = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBM
-VEX///8AAABVwtN+AAAAAnRSTlMAuyogpzwAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAcdEVY
-dFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzbovLKMAAAAFnRFWHRDcmVhdGlvbiBUaW1l
-ADEwLzExLzEz17nJ0AAAAA5JREFUCJlj+GPPQAoCAN6nE7EZ+6SGAAAAAElFTkSuQmCC)"
+  # base64 of pause icon
+  @ICON_PAUSE = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBM VEX///8AAABVwtN+AAAAAnRSTlMAuyogpzwAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAcdEVY dFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzbovLKMAAAAFnRFWHRDcmVhdGlvbiBUaW1l ADEwLzExLzEz17nJ0AAAAA5JREFUCJlj+GPPQAoCAN6nE7EZ+6SGAAAAAElFTkSuQmCC)"
 
-  @ICON_AIM = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAA3NCSVQICAjb4U/gAAAAGFBM
-VEX///8cHBwMDAwrKysXFxclJSUlJSUQEBASWjZYAAAACHRSTlMA////RKr//3XOcfIAAAAJ
-cEhZcwAACxIAAAsSAdLdfvwAAAA8dEVYdEFMVFRhZwBUaGlzIGlzIHRoZSBpY29uIGZyb20g
-R2VudGxlZmFjZS5jb20gZnJlZSBpY29ucyBzZXQuINhr6MQAAAAcdEVYdFNvZnR3YXJlAEFk
-b2JlIEZpcmV3b3JrcyBDUzbovLKMAAAAQXRFWHREZXNjcmlwdGlvbgBUaGlzIGlzIHRoZSBp
-Y29uIGZyb20gR2VudGxlZmFjZS5jb20gZnJlZSBpY29ucyBzZXQuIFR+b4cAAAAfdEVYdENv
-cHlyaWdodABST1lBTFRZIEZSRUUgTElDRU5TRSDe2YtpAAAAX0lEQVQImWNgQAIsJmgMVmNj
-UzAjOMQkOAAkkMKQwJIKZDAGMCQwBAJVOjoAeY4uDI6CggIMgoKCEBGXQBcGBvYAhgKGcJCu
-EoYClhKQOUEhKkEBYJOVlFSgdqkwIDEATgUMeYxn03gAAAAASUVORK5CYII="
+  # base64 of target icon
+  @ICON_AIM = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAA3NCSVQICAjb4U/gAAAAGFBM VEX///8cHBwMDAwrKysXFxclJSUlJSUQEBASWjZYAAAACHRSTlMA////RKr//3XOcfIAAAAJ cEhZcwAACxIAAAsSAdLdfvwAAAA8dEVYdEFMVFRhZwBUaGlzIGlzIHRoZSBpY29uIGZyb20g R2VudGxlZmFjZS5jb20gZnJlZSBpY29ucyBzZXQuINhr6MQAAAAcdEVYdFNvZnR3YXJlAEFk b2JlIEZpcmV3b3JrcyBDUzbovLKMAAAAQXRFWHREZXNjcmlwdGlvbgBUaGlzIGlzIHRoZSBp Y29uIGZyb20gR2VudGxlZmFjZS5jb20gZnJlZSBpY29ucyBzZXQuIFR+b4cAAAAfdEVYdENv cHlyaWdodABST1lBTFRZIEZSRUUgTElDRU5TRSDe2YtpAAAAX0lEQVQImWNgQAIsJmgMVmNj UzAjOMQkOAAkkMKQwJIKZDAGMCQwBAJVOjoAeY4uDI6CggIMgoKCEBGXQBcGBvYAhgKGcJCu EoYClhKQOUEhKkEBYJOVlFSgdqkwIDEATgUMeYxn03gAAAAASUVORK5CYII="
 
-  @ICON_BRUSH = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAA3NCSVQICAjb4U/gAAAAGFBM
-VEX///8iIiIqKioYGBgYGBgcHBwYGBgMDAxAz6O/AAAACHRSTlMA///M//8RZnplY+YAAAAJ
-cEhZcwAACxIAAAsSAdLdfvwAAAA8dEVYdEFMVFRhZwBUaGlzIGlzIHRoZSBpY29uIGZyb20g
-R2VudGxlZmFjZS5jb20gZnJlZSBpY29ucyBzZXQuINhr6MQAAABEdEVYdENvcHlyaWdodABD
-cmVhdGl2ZSBDb21tb25zIEF0dHJpYnV0aW9uIE5vbi1Db21tZXJjaWFsIE5vIERlcml2YXRp
-dmVze92woAAAAEF0RVh0RGVzY3JpcHRpb24AVGhpcyBpcyB0aGUgaWNvbiBmcm9tIEdlbnRs
-ZWZhY2UuY29tIGZyZWUgaWNvbnMgc2V0LiBUfm+HAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBG
-aXJld29ya3MgQ1M26LyyjAAAAG9JREFUCJljYAADdiUIzVAEZrAlsCupg+gidSOlAiAjWVBQ
-UBwkYAhkGAAZzMKFgoJAGTbzUvPQ0DCgCvNy4xIXNwYG45IyZ3MXoFS5c0myszNIrbm7eYkZ
-yNyUYvfiBBAjzaTEAGKhuXMC1AlgFQDpxxNswBv1gwAAAABJRU5ErkJggg=="
+  # base64 of brush icon
+  @ICON_BRUSH = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAA3NCSVQICAjb4U/gAAAAGFBM VEX///8iIiIqKioYGBgYGBgcHBwYGBgMDAxAz6O/AAAACHRSTlMA///M//8RZnplY+YAAAAJ cEhZcwAACxIAAAsSAdLdfvwAAAA8dEVYdEFMVFRhZwBUaGlzIGlzIHRoZSBpY29uIGZyb20g R2VudGxlZmFjZS5jb20gZnJlZSBpY29ucyBzZXQuINhr6MQAAABEdEVYdENvcHlyaWdodABD cmVhdGl2ZSBDb21tb25zIEF0dHJpYnV0aW9uIE5vbi1Db21tZXJjaWFsIE5vIERlcml2YXRp dmVze92woAAAAEF0RVh0RGVzY3JpcHRpb24AVGhpcyBpcyB0aGUgaWNvbiBmcm9tIEdlbnRs ZWZhY2UuY29tIGZyZWUgaWNvbnMgc2V0LiBUfm+HAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBG aXJld29ya3MgQ1M26LyyjAAAAG9JREFUCJljYAADdiUIzVAEZrAlsCupg+gidSOlAiAjWVBQ UBwkYAhkGAAZzMKFgoJAGTbzUvPQ0DCgCvNy4xIXNwYG45IyZ3MXoFS5c0myszNIrbm7eYkZ yNyUYvfiBBAjzaTEAGKhuXMC1AlgFQDpxxNswBv1gwAAAABJRU5ErkJggg=="
 
   # max fps acceptable
   @MAX_FPS = 60
@@ -61,14 +37,21 @@ yNyUYvfiBBAjzaTEAGKhuXMC1AlgFQDpxxNswBv1gwAAAABJRU5ErkJggg=="
   # max canvas size acceptable
   @MAX_CANVAS_SIZE = 2048
 
+  # minimuns canvas size acceptable
   @MIN_CANVAS_SIZE = 256
 
+  # max number of asset allowed
+  @MAX_ASSET_FRAME_COUNT = 32
+
+  # acceptable background color name
   @BG_LIST = ["transparent", "black","white","red","green","blue","grey"]
 
-  @EMPTY_OBJECT = {}
-
+  # default background
   @DEFAULT_BACKGROUND = "transparent"
 
+  @ASSET_PATH = "./"
+
+  # start the play
   @start = ->
     @ox = @attr("x")
     @oy = @attr("y")
@@ -77,6 +60,7 @@ yNyUYvfiBBAjzaTEAGKhuXMC1AlgFQDpxxNswBv1gwAAAABJRU5ErkJggg=="
     , 500, ">"
     return
 
+  # handle reg point move
   @move = (dx, dy) ->
     @newX = @ox + dx - 8
     @newY = @oy + dy - 8
@@ -85,6 +69,7 @@ yNyUYvfiBBAjzaTEAGKhuXMC1AlgFQDpxxNswBv1gwAAAABJRU5ErkJggg=="
       y: @newY
     return
 
+  # when release the reg point hanlder
   @up = ->
     @attr
       x: @ox
@@ -97,6 +82,24 @@ yNyUYvfiBBAjzaTEAGKhuXMC1AlgFQDpxxNswBv1gwAAAABJRU5ErkJggg=="
     delete @newX
     delete @newY
     return
+
+  # @param {String} script, "-" means repeat previous frame, "+" means goto the next frame
+  # @return {byte[]} frame number in an array
+  @parsePlayScript = (script, assetFrameCount)->
+    # validate input
+    assetFrameCount = (assetFrameCount || SgfAniRender.MAX_ASSET_FRAME_COUNT) % (SgfAniRender.MAX_ASSET_FRAME_COUNT + 1)
+    assetFrameCount = 0 if assetFrameCount < 0
+    script = String(script || "").trim().replace(/[^\-\+]/g,'')
+
+    result = [0]
+    currentAssetFrame = 0
+
+    for i in [0...script.length]
+      i = 0
+      # here
+    return
+
+
 
   # 构造函数
   # @param {HTMLElement || String} parentElement
@@ -143,7 +146,11 @@ yNyUYvfiBBAjzaTEAGKhuXMC1AlgFQDpxxNswBv1gwAAAABJRU5ErkJggg=="
   #     title:String
   # }
   #
-  load : (url, title, fps)->
+  load : (wuid, title, fps)->
+
+    url = "#{SgfAniRender.ASSET_PATH}#{wuid}.sgf"
+
+    console.log "[sgf-ani-render::load] url:#{url}"
 
     if url is @url
       console.log "[sgf-ani-render::load] target url already loaded. #{url}"
@@ -256,30 +263,7 @@ yNyUYvfiBBAjzaTEAGKhuXMC1AlgFQDpxxNswBv1gwAAAABJRU5ErkJggg=="
     @restart()
     return
 
-    #setTimeout =>
-      #@_loadImage()
-    #, 500
-
-    #return @
-
-  #_loadImage : ->
-    #console.log "[sgf-ani-render::_loadImage] message"
-    #console.dir @elFrame
-    #unless @elFrame?
-      #@elFrame = @paper.image(@url, 0, 0, @assetWidth, @assetHight)
-      #@elFrame.node.setAttribute("pointer-events", "none")
-    #else
-      #@elFrame.attr
-        #href  : @url
-        #width : @assetWidth
-        #height : @assetHight
-      #@elFrame.node.href.baseVal = @url
-
-    #@restart()
-    #return
-
-
-  toggleRegLAid : ->
+  toggleRegAid : ->
     @isShowRegAid = not @isShowRegAid
     if @isShowRegAid
       @regAidH.show()
@@ -450,7 +434,6 @@ yNyUYvfiBBAjzaTEAGKhuXMC1AlgFQDpxxNswBv1gwAAAABJRU5ErkJggg=="
       "fill" : "#333"
       "text" : msg
     return
-
 
 
 window.SgfAniRender = SgfAniRender
