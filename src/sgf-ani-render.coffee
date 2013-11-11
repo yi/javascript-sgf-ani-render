@@ -95,10 +95,10 @@ class SgfAniRender
     result = [0]
     currentAssetFrame = 0
 
-    for i in [0...script.length]
+    for i in [0...script.length] by 1
       cmd = script.charAt(i)
       ++ currentAssetFrame if cmd is "+"
-      currentAssetFrame = assetFrameCount if currentAssetFrame >= assetFrameCount
+      currentAssetFrame = (assetFrameCount - 1) if currentAssetFrame >= assetFrameCount
       result.push currentAssetFrame
 
     return result
@@ -150,7 +150,7 @@ class SgfAniRender
   #     title:String
   # }
   #
-  load : (wuid, title, fps, playScript)->
+  load : (wuid)->
 
     url = "#{SgfAniRender.ASSET_PATH}#{wuid}.sgf"
 
@@ -158,14 +158,13 @@ class SgfAniRender
 
     if url is @url
       console.log "[sgf-ani-render::load] target url already loaded. #{url}"
-      return
+      return @
 
     @url = url
 
-    @displayLabel(title || "")
-
     @stop()
 
+    @containsError = false
     err = null
 
     # read binary data
@@ -174,13 +173,13 @@ class SgfAniRender
       fileSize = ba.getFileSize()
     catch err
       @displayError err
-      return
+      return @
 
     if isNaN(fileSize) or fileSize <= 0
       err = "fail to read image binary"
       console.log "[sgf-ani-render::constructor] #{err}"
       @displayError err
-      return
+      return @
 
     # check signature
     signature = ba.readString(SgfAniRender.FILE_SIGNATURE.length, fileSize - SgfAniRender.FILE_SIGNATURE.length)
@@ -188,7 +187,7 @@ class SgfAniRender
       err = "invalid animation file"
       console.log "[sgf-ani-render::constructor] #{err}"
       @displayError err
-      return
+      return @
 
     ba.movePointer(- SgfAniRender.INTEGER_BYTE_LENGTH - SgfAniRender.FILE_SIGNATURE.length)
 
@@ -210,7 +209,7 @@ class SgfAniRender
       err ="bad animation attrs, canvasWidth:#{canvasWidth}, canvasHeight:#{canvasHeight}, @assetFrameNum:#{@assetFrameNum}"
       console.log "[sgf-ani-render::load] #{err}"
       @displayError err
-      return
+      return @
 
     if @fixedCanvasWidth is 0 and @fixedCanvasHeight is 0
       @_setCanvasSize canvasWidth, canvasHeight
@@ -249,11 +248,7 @@ class SgfAniRender
 
       yScroll += height
 
-    @setFps(fps)
-
     @setRegPoint(@regPointX, @regPointY)
-
-    @setPlayScript(playScript)
 
     if @btnPlayControl? then @btnPlayControl.show()
     if @btnBgColor? then @btnBgColor.show()
@@ -270,22 +265,23 @@ class SgfAniRender
         height : @assetHight
       @elFrame.node.href.baseVal = @url
 
-    @restart()
-    return
+    return @
 
   # 设定播放脚本
   setPlayScript : (script)->
+    console.log "[sgf-ani-render::setPlayScript] script:#{script}"
+
     script = String(script || "").trim()
 
     if script is ""
       # no script
       @frames = [0]
-      for i in [1...@assetFrameNum]
+      for i in [1...@assetFrameNum] by 1
         @frames.push i
     else
       # with specifed script
       @frames = SgfAniRender.parsePlayScript(script, @assetFrameNum)
-    return
+    return @
 
   toggleRegAid : ->
     @isShowRegAid = not @isShowRegAid
@@ -295,12 +291,12 @@ class SgfAniRender
     else
       @regAidH.hide()
       @regAidV.hide()
-    return
+    return @
 
   switchBackground : ->
     #console.log "[sgf-ani-render::switchBackground] @bgColor:#{@bgColor}"
     @setBackground(SgfAniRender.BG_LIST[SgfAniRender.BG_LIST.indexOf(@bgColor) + 1])
-    return
+    return @
 
   togglePlay : ->
     if @tickToPlay
@@ -311,24 +307,24 @@ class SgfAniRender
       @play()
       @btnPlayControl.attr
         fill : SgfAniRender.ICON_PAUSE
-    return
+    return @
 
   stop : ->
     clearTimeout @tickToPlay if @tickToPlay?
     @tickToPlay = null
-    return
+    return @
 
   restart : ->
     @currentFrame = -1
     @play()
-    return
+    return @
 
   play : ->
     @goto(@currentFrame + 1)
     @tickToPlay = setTimeout =>
       @play()
     , @spf
-    return
+    return @
 
   goto : (num)->
     #num = (parseInt(num, 10) || 0) % @assetFrameNum
@@ -354,7 +350,7 @@ class SgfAniRender
       y : assetTop
       "clip-rect":  "#{rectLeft},#{rectTop},#{assetRect.width},#{assetRect.height}"
 
-    return
+    return @
 
   setFps : (val)->
     val = (parseInt(val, 10) || SgfAniRender.DEFAULT_FPS) % SgfAniRender.MAX_FPS
@@ -362,7 +358,7 @@ class SgfAniRender
     @fps = val
     @spf = Math.ceil(1000 / val)
     #console.log "[sgf-ani-render::setFps] fps:#{@fps}, spf:#{@spf}"
-    return
+    return @
 
   setRegPoint : (x, y)->
     #console.log "[sgf-ani-render::setRegPoint] #{x}, #{y}"
@@ -386,7 +382,7 @@ class SgfAniRender
     , 500
     @isShowRegAid = true
 
-    return
+    return @
 
   _setCanvasSize : (w, h)->
     @paper.setSize(w,h)
@@ -436,10 +432,14 @@ class SgfAniRender
 
     @elBackgrond.attr "fill", fill
     #@btnBgColor.attr "fill", fill
-    return
+    return @
 
   toString : ->
     "[SgfAniRender url:#{@url}]"
+
+  setTitle : (msg)->
+    @displayLabel msg
+    return @
 
   displayError : (msg) ->
     @label = @label || @paper.text(10, 15, String(msg))
@@ -456,6 +456,7 @@ class SgfAniRender
     return
 
   displayLabel : (msg) ->
+    @containsError = true
     @label = @label ||  @paper.text(10, 15, String(msg))
     @label.attr
       "font-family" : "arial"

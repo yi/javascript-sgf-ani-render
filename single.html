@@ -8,7 +8,7 @@
 
     <script src="/lib/BinFileReader.js"></script>
     <script src="/lib/raphael-min.js"></script>
-    <script src="/lib/sgf-ani-render.js?33"></script>
+    <script src="/lib/sgf-ani-render.js?43"></script>
 
   </head>
 
@@ -23,8 +23,12 @@
         <script>
           SgfAniRender.ASSET_PATH  = "./imgs/"
           window.canvasA = new SgfAniRender("canvas1", null, 512, 512)
-          window.canvasA.load("v618460ec2t", "single render test", 24, "-+++-----------+---------+-----------------+------------+---------")
+          window.canvasA.load("v618460ec2t").setTitle("single render test").setFps(15).setPlayScript("-+++-----------+---------+-----------------+------------+---------").restart();
         </script>
+        <div>
+          <input id="playscript" size="100">
+          <button onclick="javascript:window.canvasA.setPlayScript(document.getElementById('playscript').value).restart()">apply</button>
+        </div>
       </div>
 
     </div>
