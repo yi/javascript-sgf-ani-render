@@ -6,22 +6,6 @@
 ##
 
 class SgfAniRender
-  #createjs.Sound.registerPlugins([createjs.WebAudioPlugin, createjs.FlashPlugin])
-  #createjs.Sound.registerSound("./imgs/sound1.sgf", "sound")
-  #createjs.Sound.addEventListener "fileload", (event)->
-    #console.log "[sgf-ani-render::on fileload] event:#{event}"
-    #console.dir event
-    #return
-
-  # createjs.Sound.addEventListener("fileload", createjs.proxy(this.loadHandler, (this))
-  #loadHandler = (event) ->
-    #console.log "[sgf-ani-render::on load] event"
-    #console.dir event
-    #instance = createjs.Sound.play("sound")
-    #instance.addEventListener("complete", createjs.proxy(this.handleComplete, this))
-    #instance.volume = 0.5
-    #return
-
 
   # base64 of transparent background image
   @BG_TRANSPARENT = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBM VEXf39////8zI3BgAAAACXBIWXMAAAsSAAALEgHS3X78AAAAFnRFWHRDcmVhdGlvbiBUaW1l ADEwLzA5LzEzL23IjwAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNui8sowA AAARSURBVAiZY/jPwIAVYRf9DwB+vw/x5A8ThgAAAABJRU5ErkJggg==)"
@@ -143,12 +127,13 @@ class SgfAniRender
 
   # 载入要播放的素材的wuid
   # @param {String} wuid
-  load : (wuid)->
+  # @param {String} url custom url
+  load : (wuid, url)->
 
     #url = "#{SgfAniRender.ASSET_PATH}#{wuid}.sgf"
-    url = SgfAniRender.makeURLFromWuid(wuid)
+    url = url || SgfAniRender.makeURLFromWuid(wuid)
 
-    console.log "[sgf-ani-render::load] url:#{url}"
+    #console.log "[sgf-ani-render::load] url:#{url}"
 
     if url is @url
       console.log "[sgf-ani-render::load] target url already loaded. #{url}"
