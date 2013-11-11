@@ -23,7 +23,7 @@
         <script>
           SgfAniRender.ASSET_PATH  = "./imgs/"
           window.canvasA = new SgfAniRender("canvas1", null, 512, 512)
-          window.canvasA.load("8ff972dea00", "some where some how, very very long 中午一丝场有场")
+          window.canvasA.load("8ff972dea00").setTitle("some where some how, very very long 中午一丝场有场").setFps(15).restart()
         </script>
         <div><a href="javascript:canvasA.load('od18460eb5h','od18460eb5h.sgf', 15)">od18460eb5h.sgf</div>
         <div><a href="javascript:canvasA.load('v618460ec2t','v618460ec2t.sgf', 15)">v618460ec2t.sgf</div>
@@ -37,7 +37,7 @@
 
       <div id="canvas2">
         <script>
-          var b = new SgfAniRender("canvas2", "grey").load("151865m5adk")
+          var b = new SgfAniRender("canvas2", "grey").load("151865m5adk").setFps(15).restart()
         </script>
       </div>
 
@@ -46,7 +46,7 @@
 
       <div id="canvas2">
         <script>
-          var c = new SgfAniRender("canvas2", "red").load("vb1865m576i")
+          var c = new SgfAniRender("canvas2", "red").load("vb1865m576i").setFps(15).restart()
         </script>
       </div>
 
@@ -54,7 +54,7 @@
 
       <div id="canvas3">
         <script>
-          var d = new SgfAniRender("canvas3", null, 1024, 1024).load("s81865m53lf")
+          var d = new SgfAniRender("canvas3", null, 1024, 1024).load("s81865m53lf").setFps(15).restart()
         </script>
       </div>
 

@@ -2,26 +2,11 @@
 
 a self-contained javascript lib to render sgf animation
 
-## Install
-Install the module with:
-
+## Build Distributed Version
 ```bash
-npm install sgf-ani-render
-```
+grunt
+
 
 ## Usage
 ```javascript
-var sgf_ani_render = require('sgf-ani-render');
-sgf_ani_render.awesome(); // "awesome"
-```
-_(Coming soon)_
-
-## Examples
-_(Coming soon)_
-
-## Contributing
-In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
-
-## License
-Copyright (c) 2013 yi
-Licensed under the MIT license.
+todo
