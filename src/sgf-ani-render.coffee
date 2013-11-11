@@ -6,6 +6,22 @@
 ##
 
 class SgfAniRender
+  #createjs.Sound.registerPlugins([createjs.WebAudioPlugin, createjs.FlashPlugin])
+  #createjs.Sound.registerSound("./imgs/sound1.sgf", "sound")
+  #createjs.Sound.addEventListener "fileload", (event)->
+    #console.log "[sgf-ani-render::on fileload] event:#{event}"
+    #console.dir event
+    #return
+
+  # createjs.Sound.addEventListener("fileload", createjs.proxy(this.loadHandler, (this))
+  #loadHandler = (event) ->
+    #console.log "[sgf-ani-render::on load] event"
+    #console.dir event
+    #instance = createjs.Sound.play("sound")
+    #instance.addEventListener("complete", createjs.proxy(this.handleComplete, this))
+    #instance.volume = 0.5
+    #return
+
 
   # base64 of transparent background image
   @BG_TRANSPARENT = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBM VEXf39////8zI3BgAAAACXBIWXMAAAsSAAALEgHS3X78AAAAFnRFWHRDcmVhdGlvbiBUaW1l ADEwLzA5LzEzL23IjwAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNui8sowA AAARSURBVAiZY/jPwIAVYRf9DwB+vw/x5A8ThgAAAABJRU5ErkJggg==)"
@@ -50,6 +66,9 @@ class SgfAniRender
   @DEFAULT_BACKGROUND = "transparent"
 
   @ASSET_PATH = "./"
+
+  @makeURLFromWuid = (wuid)->
+    return "#{SgfAniRender.ASSET_PATH}#{wuid}.sgf"
 
   # start the play
   @start = ->
@@ -126,7 +145,8 @@ class SgfAniRender
   # @param {String} wuid
   load : (wuid)->
 
-    url = "#{SgfAniRender.ASSET_PATH}#{wuid}.sgf"
+    #url = "#{SgfAniRender.ASSET_PATH}#{wuid}.sgf"
+    url = SgfAniRender.makeURLFromWuid(wuid)
 
     console.log "[sgf-ani-render::load] url:#{url}"
 
@@ -251,6 +271,9 @@ class SgfAniRender
     console.log "[sgf-ani-render::setPlayScript] script:#{script}"
 
     @frames = [0]
+
+    # key: frame number
+    # value: sound wuid
     @frameIdToSoundTrigger = {}
 
     script = String(script || "").trim()
@@ -261,12 +284,14 @@ class SgfAniRender
         @frames.push i
     else
       # 特定的播放脚本
-      #@frames = SgfAniRender.parsePlayScript(script, @assetFrameNum)
 
       # 从播放脚本中解析出音效的wuid
       soundWuids = []
       script = script.replace /[a-z0-9A-Z]+/g, (wuid)->
         soundWuids.push wuid
+        url = SgfAniRender.makeURLFromWuid(wuid)
+        console.log "[sgf-ani-render::setPlayScript] url:#{url}, wuid:#{wuid}"
+        #createjs.Sound.registerSound(url, wuid)
         return "^"
 
       # 过滤掉非播放脚步的字符
@@ -346,6 +371,11 @@ class SgfAniRender
     num = (parseInt(num, 10) || 0) % framesLength
     num = framesLength + (num % framesLength) if num < 0
     @currentFrame = num
+
+    if (soundWuid = @frameIdToSoundTrigger[num])?
+      #console.log "[sgf-ani-render::goto] play sound:#{soundWuid}"
+      new Audio(SgfAniRender.makeURLFromWuid(soundWuid)).play()
+      #createjs.Sound.play(soundWuid)
 
     assetFrame = @frames[num]
     assetRect = @assetRects[assetFrame]
