@@ -83,27 +83,6 @@ class SgfAniRender
     delete @newY
     return
 
-  # @param {String} script, "-" means repeat previous frame, "+" means goto the next frame
-  # @return {byte[]} frame number in an array
-  @parsePlayScript = (script, assetFrameCount)->
-
-    # validate input
-    assetFrameCount = (assetFrameCount || SgfAniRender.MAX_ASSET_FRAME_COUNT) % (SgfAniRender.MAX_ASSET_FRAME_COUNT + 1)
-    assetFrameCount = 0 if assetFrameCount < 0
-    script = String(script || "").trim().replace(/[^\-\+]/g,'')
-
-    result = [0]
-    currentAssetFrame = 0
-
-    for i in [0...script.length] by 1
-      cmd = script.charAt(i)
-      ++ currentAssetFrame if cmd is "+"
-      currentAssetFrame = (assetFrameCount - 1) if currentAssetFrame >= assetFrameCount
-      result.push currentAssetFrame
-
-    return result
-
-
 
   # 构造函数
   # @param {HTMLElement || String} parentElement
@@ -143,13 +122,8 @@ class SgfAniRender
     @btnRegControl.parent = @
 
 
-  # 构造函数
-  # @param {HTMLElement || String} parentElement
-  # @param {String} url
-  # @param {Object} config: {
-  #     title:String
-  # }
-  #
+  # 载入要播放的素材的wuid
+  # @param {String} wuid
   load : (wuid)->
 
     url = "#{SgfAniRender.ASSET_PATH}#{wuid}.sgf"
@@ -265,25 +239,55 @@ class SgfAniRender
         height : @assetHight
       @elFrame.node.href.baseVal = @url
 
+    # 重置播放脚本
+    @setPlayScript()
+
     return @
 
   # 设定播放脚本
   setPlayScript : (script)->
+
+    return @ if @containsError # 在遭遇错误的时候跳过这个请求
     console.log "[sgf-ani-render::setPlayScript] script:#{script}"
+
+    @frames = [0]
+    @frameIdToSoundTrigger = {}
 
     script = String(script || "").trim()
 
     if script is ""
-      # no script
-      @frames = [0]
+      # 空白的播放脚本
       for i in [1...@assetFrameNum] by 1
         @frames.push i
     else
-      # with specifed script
-      @frames = SgfAniRender.parsePlayScript(script, @assetFrameNum)
+      # 特定的播放脚本
+      #@frames = SgfAniRender.parsePlayScript(script, @assetFrameNum)
+
+      # 从播放脚本中解析出音效的wuid
+      soundWuids = []
+      script = script.replace /[a-z0-9A-Z]+/g, (wuid)->
+        soundWuids.push wuid
+        return "^"
+
+      # 过滤掉非播放脚步的字符
+      script = script.replace(/[^\-\+\^]/g, '')
+      currentAssetFrame = 0
+
+      for i in [0...script.length] by 1
+        cmd = script.charAt(i)
+        if cmd is "^"
+          # 遇到一个发音标记
+          @frameIdToSoundTrigger[currentAssetFrame] = soundWuids.shift()
+          continue
+        ++ currentAssetFrame if cmd is "+"
+        currentAssetFrame = (@assetFrameNum - 1) if currentAssetFrame >= @assetFrameNum
+        @frames.push currentAssetFrame
+
     return @
 
   toggleRegAid : ->
+    return @ if @containsError # 在遭遇错误的时候跳过这个请求
+
     @isShowRegAid = not @isShowRegAid
     if @isShowRegAid
       @regAidH.show()
@@ -294,11 +298,13 @@ class SgfAniRender
     return @
 
   switchBackground : ->
+    return @ if @containsError # 在遭遇错误的时候跳过这个请求
     #console.log "[sgf-ani-render::switchBackground] @bgColor:#{@bgColor}"
     @setBackground(SgfAniRender.BG_LIST[SgfAniRender.BG_LIST.indexOf(@bgColor) + 1])
     return @
 
   togglePlay : ->
+    return @ if @containsError # 在遭遇错误的时候跳过这个请求
     if @tickToPlay
       @stop()
       @btnPlayControl.attr
@@ -310,16 +316,21 @@ class SgfAniRender
     return @
 
   stop : ->
+    return @ if @containsError # 在遭遇错误的时候跳过这个请求
     clearTimeout @tickToPlay if @tickToPlay?
     @tickToPlay = null
     return @
 
   restart : ->
+    return @ if @containsError # 在遭遇错误的时候跳过这个请求
+    @stop()
     @currentFrame = -1
     @play()
     return @
 
   play : ->
+    return @ if @containsError # 在遭遇错误的时候跳过这个请求
+    #console.log "[sgf-ani-render::play] spf:#{@spf}"
     @goto(@currentFrame + 1)
     @tickToPlay = setTimeout =>
       @play()
@@ -327,6 +338,7 @@ class SgfAniRender
     return @
 
   goto : (num)->
+    return @ if @containsError # 在遭遇错误的时候跳过这个请求
     #num = (parseInt(num, 10) || 0) % @assetFrameNum
     #num = (@assetFrameNum + num) % @assetFrameNum if num < 0
     framesLength = @frames.length
@@ -353,14 +365,17 @@ class SgfAniRender
     return @
 
   setFps : (val)->
+    return @ if @containsError # 在遭遇错误的时候跳过这个请求
+
     val = (parseInt(val, 10) || SgfAniRender.DEFAULT_FPS) % SgfAniRender.MAX_FPS
     val = SgfAniRender.DEFAULT_FPS if val < 1 or val > SgfAniRender.MAX_FPS
     @fps = val
     @spf = Math.ceil(1000 / val)
-    #console.log "[sgf-ani-render::setFps] fps:#{@fps}, spf:#{@spf}"
+    console.log "[sgf-ani-render::setFps] fps:#{@fps}, spf:#{@spf}"
     return @
 
   setRegPoint : (x, y)->
+    return @ if @containsError # 在遭遇错误的时候跳过这个请求
     #console.log "[sgf-ani-render::setRegPoint] #{x}, #{y}"
     @regPointX = x
     @regPointY = y
@@ -438,10 +453,11 @@ class SgfAniRender
     "[SgfAniRender url:#{@url}]"
 
   setTitle : (msg)->
-    @displayLabel msg
+    @displayLabel msg unless @containsError
     return @
 
   displayError : (msg) ->
+    @containsError = true
     @label = @label || @paper.text(10, 15, String(msg))
     @label.attr
       "font-family" : "arial"
@@ -456,7 +472,6 @@ class SgfAniRender
     return
 
   displayLabel : (msg) ->
-    @containsError = true
     @label = @label ||  @paper.text(10, 15, String(msg))
     @label.attr
       "font-family" : "arial"
