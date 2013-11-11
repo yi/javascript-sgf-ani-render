@@ -86,6 +86,7 @@ class SgfAniRender
   # @param {String} script, "-" means repeat previous frame, "+" means goto the next frame
   # @return {byte[]} frame number in an array
   @parsePlayScript = (script, assetFrameCount)->
+
     # validate input
     assetFrameCount = (assetFrameCount || SgfAniRender.MAX_ASSET_FRAME_COUNT) % (SgfAniRender.MAX_ASSET_FRAME_COUNT + 1)
     assetFrameCount = 0 if assetFrameCount < 0
@@ -95,9 +96,12 @@ class SgfAniRender
     currentAssetFrame = 0
 
     for i in [0...script.length]
-      i = 0
-      # here
-    return
+      cmd = script.charAt(i)
+      ++ currentAssetFrame if cmd is "+"
+      currentAssetFrame = assetFrameCount if currentAssetFrame >= assetFrameCount
+      result.push currentAssetFrame
+
+    return result
 
 
 
@@ -146,7 +150,7 @@ class SgfAniRender
   #     title:String
   # }
   #
-  load : (wuid, title, fps)->
+  load : (wuid, title, fps, playScript)->
 
     url = "#{SgfAniRender.ASSET_PATH}#{wuid}.sgf"
 
@@ -164,6 +168,7 @@ class SgfAniRender
 
     err = null
 
+    # read binary data
     try
       ba = new BinFileReader(url)
       fileSize = ba.getFileSize()
@@ -177,6 +182,7 @@ class SgfAniRender
       @displayError err
       return
 
+    # check signature
     signature = ba.readString(SgfAniRender.FILE_SIGNATURE.length, fileSize - SgfAniRender.FILE_SIGNATURE.length)
     if signature isnt SgfAniRender.FILE_SIGNATURE
       err = "invalid animation file"
@@ -218,6 +224,7 @@ class SgfAniRender
     @assetHight = 0
     @assetWidth = 0
 
+    # read each asset rect info
     yScroll = 0
     for i in [0...@assetFrameNum] by 1
       left  = ba.readShort()
@@ -246,10 +253,13 @@ class SgfAniRender
 
     @setRegPoint(@regPointX, @regPointY)
 
+    @setPlayScript(playScript)
+
     if @btnPlayControl? then @btnPlayControl.show()
     if @btnBgColor? then @btnBgColor.show()
     if @btnRegControl? then @btnRegControl.show()
 
+    # load in images to canvas
     unless @elFrame?
       @elFrame = @paper.image(@url, 0, 0, @assetWidth, @assetHight)
       @elFrame.node.setAttribute("pointer-events", "none")
@@ -261,6 +271,20 @@ class SgfAniRender
       @elFrame.node.href.baseVal = @url
 
     @restart()
+    return
+
+  # 设定播放脚本
+  setPlayScript : (script)->
+    script = String(script || "").trim()
+
+    if script is ""
+      # no script
+      @frames = [0]
+      for i in [1...@assetFrameNum]
+        @frames.push i
+    else
+      # with specifed script
+      @frames = SgfAniRender.parsePlayScript(script, @assetFrameNum)
     return
 
   toggleRegAid : ->
@@ -307,11 +331,17 @@ class SgfAniRender
     return
 
   goto : (num)->
-    num = (parseInt(num, 10) || 0) % @assetFrameNum
-    num = (@assetFrameNum + num) % @assetFrameNum if num < 0
-    assetRect = @assetRects[num]
-    originalRect = @originalRects[num]
+    #num = (parseInt(num, 10) || 0) % @assetFrameNum
+    #num = (@assetFrameNum + num) % @assetFrameNum if num < 0
+    framesLength = @frames.length
+
+    num = (parseInt(num, 10) || 0) % framesLength
+    num = framesLength + (num % framesLength) if num < 0
     @currentFrame = num
+
+    assetFrame = @frames[num]
+    assetRect = @assetRects[assetFrame]
+    originalRect = @originalRects[assetFrame]
 
     assetLeft = originalRect.left
     assetTop = originalRect.top - assetRect.top
