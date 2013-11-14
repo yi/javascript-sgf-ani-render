@@ -490,7 +490,7 @@ class SgfAniRender
   displayLabel : (msg) ->
     @label = @label ||  @paper.text(10, 15, String(msg))
     msg = String(msg || "").trim()
-    msg = msg.replace('#{fps}', @fps).replace('#{assetFrameNum}', @assetFrameNum)
+    msg = msg.replace('{fps}', @fps).replace('{assetFrameNum}', @assetFrameNum)
     @label.attr
       "font-family" : "arial"
       "font-size" : "14"
