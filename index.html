@@ -8,7 +8,7 @@
 
     <script src="/lib/BinFileReader.js"></script>
     <script src="/lib/raphael-min.js"></script>
-    <script src="/lib/sgf-ani-render.js?133d"></script>
+    <script src="/lib/sgf-ani-render.js?588d"></script>
 
   </head>
 
@@ -23,7 +23,7 @@
         <script>
           SgfAniRender.ASSET_PATH  = "./imgs/"
           window.canvasA = new SgfAniRender("canvas1", null, 512, 512)
-          window.canvasA.load("8ff972dea00").setTitle("some where some how, very very long 中午一丝场有场").setFps(15).restart()
+          window.canvasA.load("8ff972dea00").setFps(15).setTitle("some where some, fps:#{fps}, assetFrameNum:#{assetFrameNum} ").restart()
         </script>
         <div><a href="javascript:canvasA.load('od18460eb5h','od18460eb5h.sgf', 15)">od18460eb5h.sgf</div>
         <div><a href="javascript:canvasA.load('v618460ec2t','v618460ec2t.sgf', 15)">v618460ec2t.sgf</div>

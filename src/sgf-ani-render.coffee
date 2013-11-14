@@ -123,6 +123,7 @@ class SgfAniRender
     @btnRegControl = @paper.image(SgfAniRender.ICON_AIM, @paper.width - 47, @paper.height - 21, 16, 16)
     .drag(SgfAniRender.move, SgfAniRender.start, SgfAniRender.up)
     @btnRegControl.parent = @
+    @setFps()
 
 
   # 载入要播放的素材的wuid
@@ -488,6 +489,8 @@ class SgfAniRender
 
   displayLabel : (msg) ->
     @label = @label ||  @paper.text(10, 15, String(msg))
+    msg = String(msg || "").trim()
+    msg = msg.replace('#{fps}', @fps).replace('#{assetFrameNum}', @assetFrameNum)
     @label.attr
       "font-family" : "arial"
       "font-size" : "14"
