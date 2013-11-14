@@ -288,7 +288,8 @@ class SgfAniRender
         cmd = script.charAt(i)
         if cmd is "^"
           # 遇到一个发音标记
-          @frameIdToSoundTrigger[currentAssetFrame] = soundWuids.shift()
+          @frameIdToSoundTrigger[@frames.length - 1] = soundWuids.shift()
+          #@frameIdToSoundTrigger[currentAssetFrame] = soundWuids.shift()
           continue
         ++ currentAssetFrame if cmd is "+"
         currentAssetFrame = (@assetFrameNum - 1) if currentAssetFrame >= @assetFrameNum
@@ -359,7 +360,7 @@ class SgfAniRender
     @currentFrame = num
 
     if (soundWuid = @frameIdToSoundTrigger[num])?
-      #console.log "[sgf-ani-render::goto] play sound:#{soundWuid}"
+      #console.log "[sgf-ani-render::goto] play sound:#{soundWuid} @ frame:#{num}"
       new Audio(SgfAniRender.makeURLFromWuid(soundWuid)).play()
       #createjs.Sound.play(soundWuid)
 
